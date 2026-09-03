@@ -134,7 +134,7 @@ def export_saved_page(html_file, manifest):
         folder_path = os.path.join(DOWNLOAD_DIR, folders.get(row.get("data-tt-parent-id"), ""))
         save_file(download_url, file_name, extension, folder_path, manifest)
 
-    save_manifest(manifest)
+        save_manifest(manifest)
 
 def main():
     if len(sys.argv) != 2:
