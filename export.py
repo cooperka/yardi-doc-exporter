@@ -17,6 +17,22 @@ MANIFEST_FILE = os.path.join(DOWNLOAD_DIR, "manifest.json")
 ANTI_SPAM_DURATION_SEC = float(os.getenv("ANTI_SPAM_DURATION_SEC"))
 
 session = requests.Session()
+# Some headers are required by cloudflare
+session.headers.update({
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/131.0.0.0 Safari/537.36"
+    ),
+    "Accept": (
+        "text/html,application/xhtml+xml,application/xml;q=0.9,"
+        "image/avif,image/webp,image/apng,*/*;q=0.8"
+    ),
+    "Accept-Language": "en-US,en;q=0.9",
+    "Sec-Fetch-Dest": "document",
+    "Sec-Fetch-Mode": "navigate",
+    "Sec-Fetch-Site": "same-origin",
+})
 
 def sanitize_filename(name):
     """Make safe filenames for OS."""
@@ -81,7 +97,10 @@ def export_saved_page(html_file, manifest):
     canonical = soup.select_one('link[rel="canonical"][href]')
     if not canonical:
         raise ValueError("Saved page is missing a canonical URL, cannot determine base_url")
-    base_url = "{uri.scheme}://{uri.netloc}".format(uri=urlparse(canonical["href"]))
+    page_url = canonical["href"]
+    base_url = "{uri.scheme}://{uri.netloc}".format(uri=urlparse(page_url))
+    # Some headers are required by cloudflare
+    session.headers["Referer"] = page_url
 
     table = soup.select_one("#DivT")
     if not table:
