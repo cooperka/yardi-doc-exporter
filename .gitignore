@@ -1,0 +1,13 @@
+# Artifacts
+*.html
+/yardi_downloads/
+*.zip
+
+# Temp files
+.DS_Store
+/junk/
+__pycache__/
+
+# IDE configs
+.vscode/
+.idea/
